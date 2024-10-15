@@ -1,0 +1,159 @@
+calc_stats.py
+
+Tables are often stored in comma-separated values (CSV) format. You can use Python's built-in string functions to read a CSV file into a list and process it.
+
+The following examples read this data.csv file:
+
+data.csv
+8.84,17.22,13.22,3.84
+3.99,11.73,19.66,1.27
+16.14,18.72,7.43,11.09
+Our file has several rows and columns. We want to store each row in a list and the whole file as a list of these rows.
+
+The program loops over each line in the file, splitting the row into a list of values, and appending each row to data:
+
+ 
+data = []
+for line in open('data.csv'):
+  data.append(line.strip().split(','))
+​
+print(data)
+The strip method removes whitespace (including the newline) from the ends of line. The split method creates a list of strings using the ',' character as the separator between items.
+
+Each value is a string!
+The split method returns a list of strings, so each value in each row is a string. We have to convert the values to floats before we can do any calculations with them.
+
+Now we can store the data in lists, we need to convert each item from a string to a float. We could do this using nested for loops:
+
+ 
+data = []
+for line in open('data.csv'):
+  row = []
+  for col in line.strip().split(','):
+    row.append(float(col))
+  data.append(row)
+​
+print(data)
+NumPy has a simpler asarray function to do this conversion:
+
+ 
+import numpy as np
+​
+data = []
+for line in open('data.csv'):
+  data.append(line.strip().split(','))
+​
+data = np.asarray(data, float)
+print(data)
+Most NumPy functions operate on the whole array at once rather than individual items.
+
+The NumPy loadtxt function can automatically read a CSV file into a NumPy array, including converting from string to numbers.
+
+Using our example file from the previous slide:
+
+data.csv
+8.84,17.22,13.22,3.84
+3.99,11.73,19.66,1.27
+16.14,18.72,7.43,11.09
+Reading and converting to floats becomes a single statement:
+
+ 
+import numpy as np
+data = np.loadtxt('data.csv', delimiter=',')
+print(data)
+The NumPy loadtxt function is simpler, faster, and less error-prone than our previous solution. Use it!
+
+Write a calc_stats function that reads data from a CSV file and calculates its mean and the median. Your function should take the name of the file as an argument and return the mean and median in a tuple, rounded to one decimal place.
+
+Here's a sample file that your function could take:
+
+data.csv
+8.84,17.22,13.22,3.84
+3.99,11.73,19.66,1.27
+16.14,18.72,7.43,11.09
+Your function should work like this:
+
+>>> calc_stats('data.csv')
+(11.1, 11.4)
+The first value is the mean and the second value is the median. You can round your results using NumPy's round function.
+
+Your solution cannot use the builtin statistics module.
+
+To test your program with different files we've provided another two CSV files in the editor on the right.
+
+For data2.csv, your function should work like this:
+
+>>> calc_stats('data2.csv')
+(11.4, 10.4)
+Don't forget to round your results to one decimal place!
+
+Hint
+If you are using numpy's loadtxt function, make sure you set the delimiter to comma.
+
+
+mean_dataset.py
+
+Unlike Python lists, NumPy arrays support numerical operations on entire arrays, either as element-wise or matrix operations.
+
+A few examples are shown below:
+ 
+import numpy as np
+​
+a = np.array([1, 2, 3])
+b = np.array([4, 5, 6])
+​
+# Element-wise multiplication 
+print(a*2)
+​
+# Element-wise summation 
+print(a + b)
+​
+# Element-wise product 
+print(a*b)
+NumPy provides many functions for element-wise calculations.
+
+We can access elements in an array with index notation, just like a list. Functions that work on lists also work on 1D NumPy arrays.
+
+You may have noticed that we also construct 1D arrays using lists.
+
+We can construct a multi-dimensional array from a nested list i.e. lists within a list. We saw nested lists when reading from CSV files.
+
+Rows or columns can be accessed using slicing, as shown below:
+
+import numpy as np
+​
+a = np.array([[1,2,3], [4,5,6]])  # 2x3 array
+​
+# Print first row of a:
+print(a[0,:])
+​
+# Print second column of a:
+print(a[:,1])
+NumPy's full array slicing functionality is described here.
+
+Write a mean_datasets function that reads in a list of CSV files and returns an array of the mean of each cell in the data files.
+
+The files each contain n rows and m columns, giving a total of n x m cells. The individual cells are separated by commas, and all CSV files in the list will have the same number of rows and columns.
+
+The result should have the same dimensions as the input files. The result should be a NumPy array with individual entries rounded to one decimal place.
+
+Suppose we want to use the three files data1.csv, data2.csv and data3.csv. Your function should then take a list of the filenames and return the following:
+
+>>> mean_datasets(['data1.csv', 'data2.csv', 'data3.csv'])
+array([[ 11.   11.9  13. ]
+       [  9.5   6.8   9.4]
+       [  7.2  11.1  12.5]
+       [  8.8   7.3   9.2]
+       [ 16.6  10.6  10.3]])
+For example, the 11.0 in the top-left cell is the mean of 7.98631, 12.65900, and 12.47115 (rounded to 1 decimal place). These values are from the first row and column of each CSV file.
+
+Here's another sample output that your function should produce given the three files data4.csv, data5.csv, and data6.csv:
+
+>>> mean_datasets(['data4.csv', 'data5.csv', 'data6.csv'])
+array([[-2.9  2.6  0.6 -5.4]
+       [-4.4 -0.7  0.7 -0.2]
+       [-1.7  2.5 -8.7 -5.4]])
+Make sure your function produces the sample outputs above.
+
+Hint
+We will test your function with different numbers of csv-files (but never less than two), so make sure it works in the general case. You can achieve this by looping over the list of file names and reading one file in at a time.
